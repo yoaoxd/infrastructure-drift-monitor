@@ -2,8 +2,6 @@
 
 A small Python command that turns a Terraform JSON plan into a resource-level drift report. It reads a file; it does not connect to your cloud account, change state, or run `terraform apply`.
 
-**Status:** initial implementation. No local tests or live Terraform validation have been performed. The example below is synthetic, not evidence from a deployed environment.
-
 ## Why this exists
 
 A normal plan can mix two different questions: what changed outside Terraform, and what Terraform proposes to do next. This command keeps them separate. By default it reads `resource_drift`. With `--planned`, it reads `resource_changes` instead and labels the output accordingly.
@@ -78,7 +76,18 @@ esac
 
 The command never proposes or executes an automatic correction.
 
-## Design limits
+## Design decisions
+
+- **Separate observation from intent.** Recorded drift and proposed changes answer different questions, so the command selects one explicitly rather than merging them into a single alert.
+- **Report addresses and actions only.** Omitting before/after values limits accidental disclosure from Terraform plans. Resource names can still be sensitive.
+- **No automatic remediation.** An external change may be intentional or part of incident response. A human-reviewed plan preserves that context.
+- **Consume a saved plan.** Cloud credentials and Terraform execution remain in the caller's workflow. The tradeoff is that report quality depends on plan freshness and coverage.
+
+A production integration would need secure plan handling, workspace identification, scheduled collection, and a review process for findings.
+
+## Status and limitations
+
+- Initial implementation; no local tests or live Terraform validation have been performed. The example is synthetic.
 
 - No scheduler, cloud SDK, UI, or background service.
 - Reports resource addresses and action names, not attribute diffs.
