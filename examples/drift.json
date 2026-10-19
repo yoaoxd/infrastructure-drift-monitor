@@ -1,0 +1,12 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.0",
+  "planned_values": {"root_module": {}},
+  "resource_drift": [
+    {
+      "address": "aws_s3_bucket.example",
+      "mode": "managed",
+      "change": {"actions": ["update"], "before": {"tags": {"owner": "platform"}}, "after": {"tags": {"owner": "manual-edit"}}}
+    }
+  ]
+}
